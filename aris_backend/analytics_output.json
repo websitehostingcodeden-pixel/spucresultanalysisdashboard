@@ -1,0 +1,294 @@
+{
+  "status": "success",
+  "summary": {
+    "total_students": 8,
+    "total_passed": 8,
+    "total_failed": 0,
+    "pass_percentage": 100.0,
+    "average_percentage": 91.44,
+    "distinction_count": 5,
+    "first_class_count": 3,
+    "second_class_count": 0,
+    "pass_class_count": 0
+  },
+  "toppers": {
+    "college": [
+      {
+        "rank": 1,
+        "reg_no": "17CO001",
+        "student_name": "N/A",
+        "section": "X",
+        "percentage": 97.2,
+        "result_class": "DISTINCTION"
+      },
+      {
+        "rank": 2,
+        "reg_no": "17SC001",
+        "student_name": "N/A",
+        "section": "A",
+        "percentage": 95.2,
+        "result_class": "DISTINCTION"
+      },
+      {
+        "rank": 3,
+        "reg_no": "17CO002",
+        "student_name": "N/A",
+        "section": "X",
+        "percentage": 94.6,
+        "result_class": "DISTINCTION"
+      },
+      {
+        "rank": 4,
+        "reg_no": "17SC002",
+        "student_name": "N/A",
+        "section": "C",
+        "percentage": 92.5,
+        "result_class": "DISTINCTION"
+      },
+      {
+        "rank": 5,
+        "reg_no": "17SC005",
+        "student_name": "N/A",
+        "section": "A",
+        "percentage": 91.6,
+        "result_class": "DISTINCTION"
+      },
+      {
+        "rank": 6,
+        "reg_no": "17SC003",
+        "student_name": "N/A",
+        "section": "B",
+        "percentage": 88.3,
+        "result_class": "FIRST_CLASS"
+      },
+      {
+        "rank": 7,
+        "reg_no": "17SC004",
+        "student_name": "N/A",
+        "section": "B",
+        "percentage": 87.1,
+        "result_class": "FIRST_CLASS"
+      },
+      {
+        "rank": 8,
+        "reg_no": "17CO003",
+        "student_name": "N/A",
+        "section": "Y",
+        "percentage": 85.0,
+        "result_class": "FIRST_CLASS"
+      }
+    ],
+    "science": [
+      {
+        "rank": 1,
+        "reg_no": "17SC001",
+        "student_name": "N/A",
+        "section": "A",
+        "percentage": 95.2,
+        "result_class": "DISTINCTION"
+      },
+      {
+        "rank": 2,
+        "reg_no": "17SC002",
+        "student_name": "N/A",
+        "section": "C",
+        "percentage": 92.5,
+        "result_class": "DISTINCTION"
+      },
+      {
+        "rank": 3,
+        "reg_no": "17SC005",
+        "student_name": "N/A",
+        "section": "A",
+        "percentage": 91.6,
+        "result_class": "DISTINCTION"
+      },
+      {
+        "rank": 4,
+        "reg_no": "17SC003",
+        "student_name": "N/A",
+        "section": "B",
+        "percentage": 88.3,
+        "result_class": "FIRST_CLASS"
+      },
+      {
+        "rank": 5,
+        "reg_no": "17SC004",
+        "student_name": "N/A",
+        "section": "B",
+        "percentage": 87.1,
+        "result_class": "FIRST_CLASS"
+      }
+    ],
+    "commerce": [
+      {
+        "rank": 1,
+        "reg_no": "17CO001",
+        "student_name": "N/A",
+        "section": "X",
+        "percentage": 97.2,
+        "result_class": "DISTINCTION"
+      },
+      {
+        "rank": 2,
+        "reg_no": "17CO002",
+        "student_name": "N/A",
+        "section": "X",
+        "percentage": 94.6,
+        "result_class": "DISTINCTION"
+      },
+      {
+        "rank": 3,
+        "reg_no": "17CO003",
+        "student_name": "N/A",
+        "section": "Y",
+        "percentage": 85.0,
+        "result_class": "FIRST_CLASS"
+      }
+    ],
+    "section_A": [
+      {
+        "rank": 1,
+        "reg_no": "17SC001",
+        "student_name": "N/A",
+        "percentage": 95.2,
+        "result_class": "DISTINCTION"
+      },
+      {
+        "rank": 2,
+        "reg_no": "17SC005",
+        "student_name": "N/A",
+        "percentage": 91.6,
+        "result_class": "DISTINCTION"
+      }
+    ],
+    "section_C": [
+      {
+        "rank": 1,
+        "reg_no": "17SC002",
+        "student_name": "N/A",
+        "percentage": 92.5,
+        "result_class": "DISTINCTION"
+      }
+    ],
+    "section_B": [
+      {
+        "rank": 1,
+        "reg_no": "17SC003",
+        "student_name": "N/A",
+        "percentage": 88.3,
+        "result_class": "FIRST_CLASS"
+      },
+      {
+        "rank": 2,
+        "reg_no": "17SC004",
+        "student_name": "N/A",
+        "percentage": 87.1,
+        "result_class": "FIRST_CLASS"
+      }
+    ],
+    "section_X": [
+      {
+        "rank": 1,
+        "reg_no": "17CO001",
+        "student_name": "N/A",
+        "percentage": 97.2,
+        "result_class": "DISTINCTION"
+      },
+      {
+        "rank": 2,
+        "reg_no": "17CO002",
+        "student_name": "N/A",
+        "percentage": 94.6,
+        "result_class": "DISTINCTION"
+      }
+    ],
+    "section_Y": [
+      {
+        "rank": 1,
+        "reg_no": "17CO003",
+        "student_name": "N/A",
+        "percentage": 85.0,
+        "result_class": "FIRST_CLASS"
+      }
+    ]
+  },
+  "sections": [
+    {
+      "section": "A",
+      "appeared": 2,
+      "passed": 2,
+      "failed": 0,
+      "distinction": 2,
+      "first_class": 0,
+      "second_class": 0,
+      "pass_class": 0,
+      "pass_percentage": 100.0,
+      "average_percentage": 93.4
+    },
+    {
+      "section": "B",
+      "appeared": 2,
+      "passed": 2,
+      "failed": 0,
+      "distinction": 0,
+      "first_class": 2,
+      "second_class": 0,
+      "pass_class": 0,
+      "pass_percentage": 100.0,
+      "average_percentage": 87.7
+    },
+    {
+      "section": "C",
+      "appeared": 1,
+      "passed": 1,
+      "failed": 0,
+      "distinction": 1,
+      "first_class": 0,
+      "second_class": 0,
+      "pass_class": 0,
+      "pass_percentage": 100.0,
+      "average_percentage": 92.5
+    },
+    {
+      "section": "X",
+      "appeared": 2,
+      "passed": 2,
+      "failed": 0,
+      "distinction": 2,
+      "first_class": 0,
+      "second_class": 0,
+      "pass_class": 0,
+      "pass_percentage": 100.0,
+      "average_percentage": 95.9
+    },
+    {
+      "section": "Y",
+      "appeared": 1,
+      "passed": 1,
+      "failed": 0,
+      "distinction": 0,
+      "first_class": 1,
+      "second_class": 0,
+      "pass_class": 0,
+      "pass_percentage": 100.0,
+      "average_percentage": 85.0
+    }
+  ],
+  "subjects": {},
+  "insights": {
+    "highest_section": {
+      "name": "A",
+      "pass_percentage": 100.0
+    },
+    "lowest_section": {
+      "name": "Y",
+      "pass_percentage": 100.0
+    },
+    "top_student": {
+      "reg_no": "17CO001",
+      "student_name": "N/A",
+      "percentage": 97.2
+    }
+  }
+}
