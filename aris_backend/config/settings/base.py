@@ -120,8 +120,13 @@ _default_cors = [
     "http://localhost:5180",
     "http://localhost:3000",
     "http://localhost:8000",
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:8000",
     config("FRONTEND_URL", default="http://localhost:5173"),
     "https://spucresultanalysisdashboard.onrender.com",
+    "https://spucresultanalysisdashboard.vercel.app",
+    # Allow all vercel.app domains (for preview deployments)
+    "https://*.vercel.app",
 ]
 
 # Allow override from environment
@@ -131,12 +136,20 @@ if _env_cors:
 else:
     CORS_ALLOWED_ORIGINS = _default_cors
 
+# CORS regex for wildcard domains (Vercel preview deployments)
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://.*\.vercel\.app$",  # Any Vercel deployment
+    r"^https://.*\.vercelapp\.com$",
+]
+
 # Production CORS settings
 CORS_ALLOW_CREDENTIALS = True  # Allow cookies/auth headers
+CORS_MAX_AGE = 600  # Cache preflight for 10 minutes
 CORS_EXPOSE_HEADERS = [
     "Content-Type",
     "X-File-Size",
     "X-Response-Time-Ms",
+    "X-CSRFToken",
 ]
 CORS_ALLOW_HEADERS = [
     "Accept",
@@ -144,6 +157,7 @@ CORS_ALLOW_HEADERS = [
     "Content-Type",
     "Authorization",
     "X-Requested-With",
+    "X-CSRFToken",
 ]
 
 # CSRF Trust
