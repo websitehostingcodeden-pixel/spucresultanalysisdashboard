@@ -16,6 +16,8 @@ Always fetch from AnalyticsSnapshot cache and return in <1 second.
 import time
 from io import BytesIO
 from django.http import FileResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.utils.decorators import method_decorator
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
@@ -47,6 +49,23 @@ from apps.results.api.api_utils import (
 
 
 
+# ===== CSRF ENDPOINT =====
+
+class CsrfTokenView(APIView):
+    """
+    GET /api/csrf/
+    
+    Returns CSRF token for cross-origin requests
+    """
+    def get(self, request):
+        from django.middleware.csrf import get_token
+        csrf_token = get_token(request)
+        return Response({
+            "csrfToken": csrf_token,
+            "status": "success"
+        }, status=status.HTTP_200_OK)
+
+
 # ===== UPLOAD ENDPOINT =====
 
 class UploadView(APIView):
@@ -67,6 +86,7 @@ class UploadView(APIView):
 
     parser_classes = (MultiPartParser, FormParser)
 
+    @method_decorator(csrf_exempt)
     @track_performance
     def post(self, request):
         """Upload Excel and process through full pipeline"""

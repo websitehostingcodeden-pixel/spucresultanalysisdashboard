@@ -36,6 +36,9 @@ from apps.results.api.section_views import SectionTransformView, SectionSampleDa
 from apps.results.api.heatmap_views import HeatmapDataView, HeatmapSampleView
 
 urlpatterns = [
+    # ===== CSRF (SECURITY) =====
+    path("csrf/", views.CsrfTokenView.as_view(), name="csrf"),
+    
     # ===== UPLOAD (ENTRY POINT) =====
     path("upload/", views.UploadView.as_view(), name="upload"),
     

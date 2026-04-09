@@ -6,6 +6,7 @@
  * - Handles authentication tokens
  * - Implements JWT refresh token flow
  * - Provides typed API methods
+ * - Manages CSRF tokens for Django
  */
 
 import axios from 'axios'
@@ -14,6 +15,7 @@ import axios from 'axios'
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api'
 const TOKEN_KEY = import.meta.env.VITE_AUTH_TOKEN_KEY || 'aris_auth_token'
 const REFRESH_TOKEN_KEY = import.meta.env.VITE_REFRESH_TOKEN_KEY || 'aris_refresh_token'
+const CSRF_TOKEN_KEY = 'django_csrf_token'
 
 // Create axios instance
 const apiClient = axios.create({
@@ -21,8 +23,53 @@ const apiClient = axios.create({
   timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
-  }
+  },
+  // Allow credentials for cross-origin requests
+  withCredentials: true
 })
+
+// Get CSRF token from cookie or local storage
+function getCsrfToken() {
+  // Try to get from cookie first
+  const name = 'csrftoken'
+  let cookieValue = null
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(';')
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim()
+      if (cookie.substring(0, name.length + 1) === (name + '=')) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1))
+        break
+      }
+    }
+  }
+  // Fallback to localStorage
+  return cookieValue || localStorage.getItem(CSRF_TOKEN_KEY)
+}
+
+// Store CSRF token
+function setCsrfToken(token) {
+  localStorage.setItem(CSRF_TOKEN_KEY, token)
+}
+
+// Initialize CSRF token on app load
+async function initializeCsrfToken() {
+  try {
+    // Make a GET request to get CSRF token from backend
+    const response = await apiClient.get('/csrf/', { 
+      skipHeaders: true // Skip adding Authorization header for this request
+    })
+    const token = response.data.csrfToken || response.headers['x-csrftoken']
+    if (token) {
+      setCsrfToken(token)
+    }
+  } catch (err) {
+    console.warn('Could not initialize CSRF token:', err.message)
+  }
+}
+
+// Initialize CSRF on first load
+initializeCsrfToken()
 
 let isRefreshing = false
 let failedQueue = []
@@ -38,13 +85,28 @@ const processQueue = (error, token = null) => {
   failedQueue = []
 }
 
-// Request interceptor: Attach token
+// Request interceptor: Attach token and CSRF
 apiClient.interceptors.request.use(
   (config) => {
+    // Skip auth for CSRF endpoint
+    if (config.url === '/csrf/') {
+      return config
+    }
+
+    // Add JWT auth token if available
     const token = localStorage.getItem(TOKEN_KEY)
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
+
+    // Add CSRF token to POST/PUT/DELETE requests
+    if (['post', 'put', 'delete'].includes(config.method?.toLowerCase())) {
+      const csrfToken = getCsrfToken()
+      if (csrfToken) {
+        config.headers['X-CSRFToken'] = csrfToken
+      }
+    }
+
     return config
   },
   (error) => Promise.reject(error)
@@ -52,7 +114,14 @@ apiClient.interceptors.request.use(
 
 // Response interceptor: Handle 401 with refresh token
 apiClient.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    // Save CSRF token from response if provided
+    const csrfToken = response.headers['x-csrftoken'] || response.data?.csrfToken
+    if (csrfToken) {
+      setCsrfToken(csrfToken)
+    }
+    return response
+  },
   (error) => {
     const originalRequest = error.config
 
