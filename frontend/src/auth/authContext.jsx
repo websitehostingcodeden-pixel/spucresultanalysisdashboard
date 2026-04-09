@@ -1,17 +1,19 @@
 /**
  * Auth Context & Hook
  * 
- * Manages authentication state
+ * Manages authentication state with JWT tokens and refresh logic
  */
 
 import React, { createContext, useContext, useState, useCallback } from 'react'
 
 const AuthContext = createContext(null)
 
+const TOKEN_KEY = import.meta.env.VITE_AUTH_TOKEN_KEY || 'aris_auth_token'
+const REFRESH_TOKEN_KEY = import.meta.env.VITE_REFRESH_TOKEN_KEY || 'aris_refresh_token'
+
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    // Check if token exists in localStorage
-    const token = localStorage.getItem(import.meta.env.VITE_AUTH_TOKEN_KEY || 'aris_auth_token')
+    const token = localStorage.getItem(TOKEN_KEY)
     return !!token
   })
 
@@ -20,23 +22,24 @@ export const AuthProvider = ({ children }) => {
     return userData ? JSON.parse(userData) : null
   })
 
-  // Simple login (in real app, would validate with backend)
-  const login = useCallback((username, password) => {
-    // For demo, accept any credentials
-    // In production, this would call backend auth endpoint
-    const token = `token_${Date.now()}`
-    localStorage.setItem(import.meta.env.VITE_AUTH_TOKEN_KEY || 'aris_auth_token', token)
+  // Store both access and refresh tokens
+  const login = useCallback((username, password, accessToken, refreshToken) => {
+    localStorage.setItem(TOKEN_KEY, accessToken)
+    localStorage.setItem(REFRESH_TOKEN_KEY, refreshToken)
     localStorage.setItem('aris_user', JSON.stringify({ username }))
     setIsAuthenticated(true)
     setUser({ username })
     return Promise.resolve()
   }, [])
 
+  // Force logout - clear all tokens
   const logout = useCallback(() => {
-    localStorage.removeItem(import.meta.env.VITE_AUTH_TOKEN_KEY || 'aris_auth_token')
+    localStorage.removeItem(TOKEN_KEY)
+    localStorage.removeItem(REFRESH_TOKEN_KEY)
     localStorage.removeItem('aris_user')
     setIsAuthenticated(false)
     setUser(null)
+    window.location.href = '/login'
   }, [])
 
   return (

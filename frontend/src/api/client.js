@@ -4,7 +4,7 @@
  * All API calls MUST go through this client.
  * - Configures base URL from environment
  * - Handles authentication tokens
- * - Implements global error handling
+ * - Implements JWT refresh token flow
  * - Provides typed API methods
  */
 
@@ -12,17 +12,32 @@ import axios from 'axios'
 
 const API_BASE_URL = '/api'
 const TOKEN_KEY = import.meta.env.VITE_AUTH_TOKEN_KEY || 'aris_auth_token'
+const REFRESH_TOKEN_KEY = import.meta.env.VITE_REFRESH_TOKEN_KEY || 'aris_refresh_token'
 
 // Create axios instance
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 30000,  // Increased to 30 seconds for analytics computation
+  timeout: 30000,
   headers: {
     'Content-Type': 'application/json',
   }
 })
 
-// Add auth token to requests
+let isRefreshing = false
+let failedQueue = []
+
+const processQueue = (error, token = null) => {
+  failedQueue.forEach(prom => {
+    if (error) {
+      prom.reject(error)
+    } else {
+      prom.resolve(token)
+    }
+  })
+  failedQueue = []
+}
+
+// Request interceptor: Attach token
 apiClient.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem(TOKEN_KEY)
@@ -34,14 +49,56 @@ apiClient.interceptors.request.use(
   (error) => Promise.reject(error)
 )
 
-// Global error handler
+// Response interceptor: Handle 401 with refresh token
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
+    const originalRequest = error.config
+
     // Handle 401 Unauthorized
-    if (error.response?.status === 401) {
-      localStorage.removeItem(TOKEN_KEY)
-      window.location.href = '/login'
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({ resolve, reject })
+        })
+          .then(token => {
+            originalRequest.headers.Authorization = `Bearer ${token}`
+            return apiClient(originalRequest)
+          })
+          .catch(err => Promise.reject(err))
+      }
+
+      originalRequest._retry = true
+      isRefreshing = true
+
+      // Try to refresh token
+      const refreshToken = localStorage.getItem(REFRESH_TOKEN_KEY)
+
+      if (!refreshToken) {
+        // No refresh token - force logout
+        forceLogout()
+        return Promise.reject(error)
+      }
+
+      return apiClient
+        .post('/token/refresh/', { refresh: refreshToken })
+        .then(res => {
+          const { access } = res.data
+          localStorage.setItem(TOKEN_KEY, access)
+          apiClient.defaults.headers.common.Authorization = `Bearer ${access}`
+          originalRequest.headers.Authorization = `Bearer ${access}`
+          processQueue(null, access)
+          return apiClient(originalRequest)
+        })
+        .catch(err => {
+          // Refresh failed - logout
+          forceLogout()
+          processQueue(err, null)
+          return Promise.reject(err)
+        })
+        .finally(() => {
+          isRefreshing = false
+        })
     }
     
     // Build detailed error object
@@ -53,18 +110,18 @@ apiClient.interceptors.response.use(
       method: error.config?.method || 'unknown'
     }
     
-    // Log with proper formatting so details are visible in console
-    console.error('API Error:', errorData.status, errorData.message, errorData)
-    console.error('Full error details:', {
-      responseStatus: error.response?.status,
-      responseData: error.response?.data,
-      message: error.message,
-      url: error.config?.url
-    })
-    
+    console.error('API Error:', errorData.status, errorData.message)
     return Promise.reject(errorData)
   }
 )
+
+// Force logout helper
+function forceLogout() {
+  localStorage.removeItem(TOKEN_KEY)
+  localStorage.removeItem(REFRESH_TOKEN_KEY)
+  localStorage.removeItem('aris_user')
+  window.location.href = '/login'
+}
 
 /**
  * API Methods
@@ -117,6 +174,16 @@ export const api = {
 
   getStats: () => 
     apiClient.get('/stats/'),
+
+  // ===== AUTHENTICATION =====
+  login: (username, password) =>
+    apiClient.post('/login/', { username, password }),
+
+  refreshToken: (refresh) =>
+    apiClient.post('/token/refresh/', { refresh }),
+
+  logout: () =>
+    apiClient.post('/logout/'),
 }
 
 export default apiClient
