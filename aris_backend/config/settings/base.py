@@ -113,33 +113,35 @@ SIMPLE_JWT = {
 }
 
 # CORS (CORS Headers for Vite Frontend)
-# Allow from environment OR use defaults
-_env_cors = config("CORS_ALLOWED_ORIGINS", default="")
-if _env_cors:
+# Get from environment OR use sensible defaults
+_env_cors = config("CORS_ALLOWED_ORIGINS", default="").strip()
+
+if _env_cors and _env_cors != "":
+    # Use environment variable if provided
     CORS_ALLOWED_ORIGINS = [origin.strip() for origin in _env_cors.split(",") if origin.strip()]
+    print(f"CORS ORIGINS from ENV: {CORS_ALLOWED_ORIGINS}")
 else:
+    # Use safe defaults if not in environment
     CORS_ALLOWED_ORIGINS = [
-        "http://localhost:5173",
-        "http://localhost:5174",
-        "http://localhost:5175",
-        "http://localhost:5176",
-        "http://localhost:5177",
-        "http://localhost:5178",
-        "http://localhost:5179",
-        "http://localhost:5180",
+        "http://localhost",
         "http://localhost:3000",
+        "http://localhost:5173",
         "http://localhost:8000",
+        "http://127.0.0.1",
+        "http://127.0.0.1:3000",
         "http://127.0.0.1:5173",
         "http://127.0.0.1:8000",
         "https://spucresultanalysisdashboard.onrender.com",
         "https://spucresultanalysisdashboard.vercel.app",
     ]
+    print(f"CORS ORIGINS from DEFAULTS: {CORS_ALLOWED_ORIGINS}")
 
 # CORS regex for wildcard domains (Vercel preview deployments)
 CORS_ALLOWED_ORIGIN_REGEXES = [
-    r"^https://.*\.vercel\.app$",  # Any Vercel deployment
+    r"^https://.*\.vercel\.app$",
     r"^https://.*\.vercelapp\.com$",
-    r"^http://localhost.*",  # All localhost variants
+    r"^http://localhost",
+    r"^http://127\.0\.0\.1",
 ]
 
 # Production CORS settings
