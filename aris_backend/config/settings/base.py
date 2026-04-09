@@ -100,26 +100,36 @@ REST_FRAMEWORK = {
     "PAGE_SIZE": 100,
 }
 
+# JWT Authentication Settings
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': config("ACCESS_TOKEN_LIFETIME", cast=int, default=60),  # minutes
+    'REFRESH_TOKEN_LIFETIME': config("REFRESH_TOKEN_LIFETIME", cast=int, default=1440),  # minutes (1 day)
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+}
+
 # CORS (CORS Headers for Vite Frontend)
-CORS_ALLOWED_ORIGINS = [
-    # Development
-    "http://localhost:5173",      # Vite default
-    "http://localhost:5174",      # Vite fallback
+_default_cors = [
+    "http://localhost:5173",
+    "http://localhost:5174",
     "http://localhost:5175",
     "http://localhost:5176",
     "http://localhost:5177",
     "http://localhost:5178",
     "http://localhost:5179",
     "http://localhost:5180",
-    "http://localhost:3000",      # Alternative
-    "http://localhost:8000",      # Same-host development
-    
-    # Production (configure via env)
+    "http://localhost:3000",
+    "http://localhost:8000",
     config("FRONTEND_URL", default="http://localhost:5173"),
-    
-    # Render deployment
     "https://spucresultanalysisdashboard.onrender.com",
 ]
+
+# Allow override from environment
+_env_cors = config("CORS_ALLOWED_ORIGINS", default="")
+if _env_cors:
+    CORS_ALLOWED_ORIGINS = [origin.strip() for origin in _env_cors.split(",")]
+else:
+    CORS_ALLOWED_ORIGINS = _default_cors
 
 # Production CORS settings
 CORS_ALLOW_CREDENTIALS = True  # Allow cookies/auth headers
@@ -135,6 +145,20 @@ CORS_ALLOW_HEADERS = [
     "Authorization",
     "X-Requested-With",
 ]
+
+# CSRF Trust
+_default_csrf = [
+    "https://spucresultanalysisdashboard.vercel.app",
+    "https://spucresultanalysisdashboard.onrender.com",
+    "http://localhost:5173",
+    "http://localhost:8000",
+]
+
+_env_csrf = config("CSRF_TRUSTED_ORIGINS", default="")
+if _env_csrf:
+    CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in _env_csrf.split(",")]
+else:
+    CSRF_TRUSTED_ORIGINS = _default_csrf
 
 # File upload
 MAX_FILE_SIZE = config("MAX_FILE_SIZE", cast=int, default=5242880)
