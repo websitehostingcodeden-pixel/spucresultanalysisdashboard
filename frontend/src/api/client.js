@@ -62,9 +62,11 @@ async function initializeCsrfToken() {
     const token = response.data.csrfToken || response.headers['x-csrftoken']
     if (token) {
       setCsrfToken(token)
+      console.log('CSRF token initialized successfully')
     }
   } catch (err) {
-    console.warn('Could not initialize CSRF token:', err.message)
+    // This is non-critical, continue without warning
+    console.debug('CSRF token initialization skipped (cross-origin or not available):', err.message)
   }
 }
 

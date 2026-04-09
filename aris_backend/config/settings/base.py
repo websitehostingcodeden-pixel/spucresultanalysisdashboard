@@ -27,7 +27,7 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "config.middleware.CsrfExemptMiddleware",  # Custom CSRF that exempts /api/
+    "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
@@ -113,42 +113,38 @@ SIMPLE_JWT = {
 }
 
 # CORS (CORS Headers for Vite Frontend)
-_default_cors = [
-    "http://localhost:5173",
-    "http://localhost:5174",
-    "http://localhost:5175",
-    "http://localhost:5176",
-    "http://localhost:5177",
-    "http://localhost:5178",
-    "http://localhost:5179",
-    "http://localhost:5180",
-    "http://localhost:3000",
-    "http://localhost:8000",
-    "http://127.0.0.1:5173",
-    "http://127.0.0.1:8000",
-    config("FRONTEND_URL", default="http://localhost:5173"),
-    "https://spucresultanalysisdashboard.onrender.com",
-    "https://spucresultanalysisdashboard.vercel.app",
-    # Allow all vercel.app domains (for preview deployments)
-    "https://*.vercel.app",
-]
-
-# Allow override from environment
+# Allow from environment OR use defaults
 _env_cors = config("CORS_ALLOWED_ORIGINS", default="")
 if _env_cors:
-    CORS_ALLOWED_ORIGINS = [origin.strip() for origin in _env_cors.split(",")]
+    CORS_ALLOWED_ORIGINS = [origin.strip() for origin in _env_cors.split(",") if origin.strip()]
 else:
-    CORS_ALLOWED_ORIGINS = _default_cors
+    CORS_ALLOWED_ORIGINS = [
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "http://localhost:5175",
+        "http://localhost:5176",
+        "http://localhost:5177",
+        "http://localhost:5178",
+        "http://localhost:5179",
+        "http://localhost:5180",
+        "http://localhost:3000",
+        "http://localhost:8000",
+        "http://127.0.0.1:5173",
+        "http://127.0.0.1:8000",
+        "https://spucresultanalysisdashboard.onrender.com",
+        "https://spucresultanalysisdashboard.vercel.app",
+    ]
 
 # CORS regex for wildcard domains (Vercel preview deployments)
 CORS_ALLOWED_ORIGIN_REGEXES = [
     r"^https://.*\.vercel\.app$",  # Any Vercel deployment
     r"^https://.*\.vercelapp\.com$",
+    r"^http://localhost.*",  # All localhost variants
 ]
 
 # Production CORS settings
 CORS_ALLOW_CREDENTIALS = True  # Allow cookies/auth headers
-CORS_MAX_AGE = 600  # Cache preflight for 10 minutes
+CORS_MAX_AGE = 3600  # Cache preflight for 1 hour
 CORS_EXPOSE_HEADERS = [
     "Content-Type",
     "X-File-Size",
@@ -163,6 +159,9 @@ CORS_ALLOW_HEADERS = [
     "X-Requested-With",
     "X-CSRFToken",
 ]
+# For development: allow all origins
+if DEBUG:
+    CORS_ALLOW_ALL_ORIGINS = True
 
 # CSRF Trust
 _default_csrf = [

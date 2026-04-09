@@ -57,7 +57,13 @@ class CsrfTokenView(APIView):
     GET /api/csrf/
     
     Returns CSRF token for cross-origin requests
+    Exempt from CSRF since it's just returning the token needed for subsequent requests
     """
+    
+    def options(self, request):
+        """Handle CORS preflight"""
+        return Response({"status": "ok"}, status=status.HTTP_200_OK)
+    
     def get(self, request):
         from django.middleware.csrf import get_token
         csrf_token = get_token(request)
