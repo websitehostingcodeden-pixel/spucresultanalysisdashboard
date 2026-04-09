@@ -31,16 +31,17 @@ LEGACY (Backward Compatible):
 """
 
 from django.urls import path
+from django.views.decorators.csrf import csrf_exempt
 from apps.results.api import views
 from apps.results.api.section_views import SectionTransformView, SectionSampleDataView
 from apps.results.api.heatmap_views import HeatmapDataView, HeatmapSampleView
 
 urlpatterns = [
     # ===== CSRF (SECURITY) =====
-    path("csrf/", views.CsrfTokenView.as_view(), name="csrf"),
+    path("csrf/", csrf_exempt(views.CsrfTokenView.as_view()), name="csrf"),
     
     # ===== UPLOAD (ENTRY POINT) =====
-    path("upload/", views.UploadView.as_view(), name="upload"),
+    path("upload/", csrf_exempt(views.UploadView.as_view()), name="upload"),
     
     # ===== STUDENT PERFORMANCE TABLE (NEW) =====
     path("students/", views.StudentPerformanceView.as_view(), name="students"),
