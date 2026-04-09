@@ -51,6 +51,7 @@ from apps.results.api.api_utils import (
 
 # ===== CSRF ENDPOINT =====
 
+@method_decorator(csrf_exempt, name='dispatch')
 class CsrfTokenView(APIView):
     """
     GET /api/csrf/
