@@ -7,7 +7,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__fil
 # Security
 SECRET_KEY = config("SECRET_KEY")
 DEBUG = config("DEBUG", cast=bool)
-ALLOWED_HOSTS = config("ALLOWED_HOSTS").split(",")
+ALLOWED_HOSTS = config("ALLOWED_HOSTS", default="localhost,127.0.0.1").split(",")
 
 # Application definition
 INSTALLED_APPS = [
@@ -104,18 +104,21 @@ REST_FRAMEWORK = {
 CORS_ALLOWED_ORIGINS = [
     # Development
     "http://localhost:5173",      # Vite default
-    "http://localhost:5174",      # Vite fallback (when 5173 in use)
-    "http://localhost:5175",      # Vite fallback (when 5173-5174 in use)
-    "http://localhost:5176",      # Vite fallback (when 5173-5175 in use)
-    "http://localhost:5177",      # Vite fallback (when 5173-5176 in use)
-    "http://localhost:5178",      # Vite fallback (when 5173-5177 in use)
-    "http://localhost:5179",      # Vite fallback (when 5173-5178 in use)
-    "http://localhost:5180",      # Vite fallback (when 5173-5179 in use)
+    "http://localhost:5174",      # Vite fallback
+    "http://localhost:5175",
+    "http://localhost:5176",
+    "http://localhost:5177",
+    "http://localhost:5178",
+    "http://localhost:5179",
+    "http://localhost:5180",
     "http://localhost:3000",      # Alternative
     "http://localhost:8000",      # Same-host development
     
     # Production (configure via env)
     config("FRONTEND_URL", default="http://localhost:5173"),
+    
+    # Render deployment
+    "https://spucresultanalysisdashboard.onrender.com",
 ]
 
 # Production CORS settings
