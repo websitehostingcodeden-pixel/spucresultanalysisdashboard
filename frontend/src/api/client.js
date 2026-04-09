@@ -10,7 +10,8 @@
 
 import axios from 'axios'
 
-const API_BASE_URL = '/api'
+// Get API base URL from environment, default to /api for dev (proxy)
+const API_BASE_URL = import.meta.env.VITE_API_URL || '/api'
 const TOKEN_KEY = import.meta.env.VITE_AUTH_TOKEN_KEY || 'aris_auth_token'
 const REFRESH_TOKEN_KEY = import.meta.env.VITE_REFRESH_TOKEN_KEY || 'aris_refresh_token'
 
