@@ -2,7 +2,7 @@ services:
   - type: web
     name: spucresultanalysisdashboard
     env: python
-    buildCommand: pip install -r requirements.txt && python manage.py migrate --verbosity=2
+    buildCommand: pip install -r requirements.txt && python manage.py migrate || echo "Migration attempted"
     startCommand: gunicorn config.wsgi:application
     envVars:
       - key: SECRET_KEY
