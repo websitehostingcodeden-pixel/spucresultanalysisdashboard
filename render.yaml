@@ -9,6 +9,8 @@ services:
         generateValue: true
       - key: DEBUG
         value: "False"
+      - key: DATABASE_URL
+        value: "postgresql://neondb_owner:npg_toXp6TanJ0xd@ep-purple-bar-a4babm07.us-east-1.aws.neon.tech/neondb?sslmode=require"
       - key: BASE_ALLOWED_HOSTS
         value: "spucresultanalysisdashboard.onrender.com"
       - key: ALLOWED_HOSTS
