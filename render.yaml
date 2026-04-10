@@ -3,7 +3,7 @@ services:
     name: spucresultanalysisdashboard
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn config.wsgi:application
+    startCommand: gunicorn config.wsgi:application --timeout 120 --worker-class=gevent --workers 1
     envVars:
       - key: SECRET_KEY
         generateValue: true
