@@ -110,19 +110,6 @@ class UploadView(APIView):
                 )
 
             print(f"FILE VALIDATED: {file.name}, size={file.size}")
-            print("CREATING UPLOAD LOG...")
-            print("CALLING PROCESS_UPLOAD...")
-            try:
-                success, records_created, quality_metrics, error_msg = process_upload(file, upload_log)
-            except Exception as e:
-                print(f"PROCESS_UPLOAD FAILED: {e}")
-                upload_log.status = "FAILED"
-                upload_log.error_message = str(e)
-                upload_log.save()
-                return build_error_response(
-                    APIError(f"Upload processing error: {str(e)}", code="PROCESSING_ERROR", status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
-                )
-            print(f"PROCESS_UPLOAD DONE: success={success}")
 
             # Validate file size
             is_valid, error = validate_file_size(file)
@@ -139,13 +126,26 @@ class UploadView(APIView):
                 )
 
             # Create upload log
+            print("CREATING UPLOAD LOG...")
             upload_log = UploadLog.objects.create(
                 filename=file.name,
                 status="PENDING"
             )
+            print(f"UPLOAD LOG CREATED: id={upload_log.id}")
 
             # Process upload through PART 1 + PART 2
-            success, records_created, quality_metrics, error_msg = process_upload(file, upload_log)
+            print("CALLING PROCESS_UPLOAD...")
+            try:
+                success, records_created, quality_metrics, error_msg = process_upload(file, upload_log)
+            except Exception as e:
+                print(f"PROCESS_UPLOAD FAILED: {e}")
+                upload_log.status = "FAILED"
+                upload_log.error_message = str(e)
+                upload_log.save()
+                return build_error_response(
+                    APIError(f"Upload processing error: {str(e)}", code="PROCESSING_ERROR", status_code=status.HTTP_500_INTERNAL_SERVER_ERROR)
+                )
+            print(f"PROCESS_UPLOAD DONE: success={success}")
 
             if success:
                 upload_log.status = "SUCCESS"
