@@ -111,18 +111,6 @@ class UploadView(APIView):
 
             print(f"FILE VALIDATED: {file.name}, size={file.size}")
 
-            # TEMP: Return early to test if upload works
-            upload_log = UploadLog.objects.create(
-                filename=file.name,
-                status="SUCCESS",
-                records_processed=0
-            )
-            return Response({
-                "status": "uploaded",
-                "upload_id": upload_log.id,
-                "message": "File received - processing disabled for test"
-            })
-
             # Validate file size
             is_valid, error = validate_file_size(file)
             if not is_valid:
