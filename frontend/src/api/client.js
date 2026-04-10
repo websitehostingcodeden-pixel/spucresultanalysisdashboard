@@ -12,7 +12,7 @@
 import axios from 'axios'
 
 // Get API base URL from environment, default to /api for dev (proxy)
-const API_BASE_URL = import.meta.env.VITE_API_URL || '/api'
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://spucresultanalysisdashboard.onrender.com/api'
 const TOKEN_KEY = import.meta.env.VITE_AUTH_TOKEN_KEY || 'aris_auth_token'
 const REFRESH_TOKEN_KEY = import.meta.env.VITE_REFRESH_TOKEN_KEY || 'aris_refresh_token'
 const CSRF_TOKEN_KEY = 'django_csrf_token'
