@@ -2,7 +2,7 @@ services:
   - type: web
     name: spucresultanalysisdashboard
     env: python
-    buildCommand: pip install -r requirements.txt && python manage.py migrate || echo "Migration attempted"
+    buildCommand: pip install -r requirements.txt
     startCommand: gunicorn config.wsgi:application
     envVars:
       - key: SECRET_KEY
@@ -17,3 +17,4 @@ services:
         value: "spucresultanalysisdashboard.onrender.com"
       - key: ALLOWED_HOSTS
         value: "spucresultanalysisdashboard.onrender.com"
+    postDeployCommand: python manage.py migrate
