@@ -20,6 +20,8 @@ extra_hosts = os.getenv('EXTRA_ALLOWED_HOSTS', '')
 if extra_hosts:
     ALLOWED_HOSTS.extend([h.strip() for h in extra_hosts.split(',') if h.strip()])
 
+CORS_ALLOW_ALL_ORIGINS = True
+
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 SECURE_SSL_REDIRECT = False
 
